@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>어떤 용도의 건물에서 나오나</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css" rel="stylesheet">
+<style>
+  :root{
+    --bg:transparent; --panel:#1f3054; --panel-line:rgba(255,255,255,.12);
+    --ink:#ece7de; --ink-dim:#b8b1a4; --ink-faint:#7a7469;
+    --accent:#D9A05B; --accent2:#8f6fae;
+    --grid:rgba(255,255,255,.14);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    -webkit-font-smoothing:antialiased}
+
+  .use-bars{max-width:1180px;margin:0 auto;padding:44px 24px 56px}
+  .ub-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .ub-head h2{margin:0;font-size:clamp(24px,3.2vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.3}
+  .ub-unit{font-size:13px;color:var(--ink-faint);font-weight:500}
+  .ub-head p{margin:14px 0 0;color:var(--ink-dim);font-size:15px;line-height:1.7;max-width:60ch;flex-basis:100%}
+
+  .ub-legend{margin-top:22px;display:flex;gap:22px;align-items:center}
+  .ub-legend span{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink-dim)}
+  .ub-legend i{width:13px;height:13px;border-radius:50%;display:inline-block}
+
+  .ub-chart{position:relative;margin-top:26px;padding-top:30px}
+  .ub-axis{position:absolute;top:0;left:var(--label-w,140px);right:0;height:20px;
+           display:flex;justify-content:space-between;font-size:12px;color:var(--ink-faint);
+           font-variant-numeric:tabular-nums}
+  .ub-grid{position:absolute;top:30px;left:var(--label-w,140px);right:0;bottom:0;
+           display:flex;justify-content:space-between;pointer-events:none}
+  .ub-grid i{width:1px;background:var(--grid)}
+
+  .ub-list{position:relative;display:flex;flex-direction:column;gap:6px}
+  .ub-row{display:grid;grid-template-columns:var(--label-w,140px) 1fr;align-items:center;height:38px}
+  .ub-name{font-size:14.5px;color:var(--ink);padding-right:16px;white-space:nowrap;
+           text-align:right;transition:color .15s}
+  .ub-track{position:relative;height:100%}
+  .ub-line{position:absolute;left:0;top:50%;height:3px;width:0;transform:translateY(-50%);
+           border-radius:2px;background:linear-gradient(90deg,var(--accent2),var(--accent));
+           transition:width 1s cubic-bezier(.22,.85,.3,1)}
+  .ub-dot{position:absolute;top:50%;width:14px;height:14px;left:0;border-radius:50%;
+          background:var(--accent);transform:translate(-50%,-50%) scale(0);
+          box-shadow:0 0 0 4px rgba(217,160,91,.18);
+          transition:left 1s cubic-bezier(.22,.85,.3,1),transform .4s cubic-bezier(.34,1.56,.64,1) .5s}
+  .ub-dot.shown{transform:translate(-50%,-50%) scale(1)}
+  .ub-val{position:absolute;top:50%;transform:translateY(-50%);white-space:nowrap;
+          font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink-dim);
+          opacity:0;transition:opacity .4s ease .6s}
+  .ub-val.shown{opacity:1}
+  .ub-val b{color:var(--ink);font-weight:700;font-size:14px}
+  .ub-val .sep{color:var(--ink-faint);margin:0 5px}
+
+  .ub-row.is-other .ub-line{background:linear-gradient(90deg,#4a5670,#6c7994)}
+  .ub-row.is-other .ub-dot{background:#7a89a8;box-shadow:0 0 0 4px rgba(122,137,168,.16)}
+  .ub-row.is-other .ub-name{color:var(--ink-dim)}
+
+  .ub-row:hover .ub-name{color:var(--accent)}
+
+  .ub-note{margin:34px 0 0;padding:18px 0 8px;border-top:1px solid var(--panel-line);
+           color:var(--ink-faint);font-size:12.5px;line-height:1.7}
+
+  @media (max-width:640px){
+    .ub-chart{--label-w:96px}
+    .ub-name{font-size:13px}
+  }
+</style>
+</head>
+<body>
+<section class="use-bars">
+  <header class="ub-head">
+    <h2>어떤 용도의 건물에서 나오나</h2>
+    <span class="ub-unit">단위: %</span>
+    <p>위법 확정 매물이 등록된 건물의 건축물대장 용도<br>점의 위치는 전체 매물 수 대비 비율</p>
+  </header>
+
+  <div class="ub-legend">
+    <span><i style="background:var(--accent)"></i>등록 용도별 매물 비율</span>
+    <span><i style="background:#7a89a8"></i>기타 6개 용도(묶음)</span>
+  </div>
+
+  <div class="ub-chart">
+    <div class="ub-axis" id="axis"></div>
+    <div class="ub-grid" id="grid"></div>
+    <div class="ub-list" id="list"></div>
+  </div>
+
+  <p class="ub-note" id="note"></p>
+</section>
+
+<script>
+const BASE = 693;
+const MULTI = 24;
+
+const USES = [
+  {name:"업무시설",         count:193},
+  {name:"단독주택",         count:153},
+  {name:"공동주택",         count:141},
+  {name:"제2종근린생활시설", count:107},
+  {name:"공장",             count:78},
+  {name:"제1종근린생활시설", count:35},
+  {name:"숙박시설",         count:17},
+  {name:"기타 6개 용도",     count:15, isOther:true}
+];
+
+const rows = [...USES].sort((a,b)=>{
+  if (a.isOther !== b.isOther) return a.isOther ? 1 : -1;
+  return b.count - a.count;
+});
+
+const MAXPCT = Math.max(...rows.map(r => r.count / BASE * 100));
+const AXIS_MAX = Math.ceil(MAXPCT / 10) * 10 + 10;
+const TICKS = [];
+for (let t = 0; t <= AXIS_MAX; t += 10) TICKS.push(t);
+
+const axis = document.getElementById("axis");
+const grid = document.getElementById("grid");
+TICKS.forEach(t=>{
+  const a = document.createElement("span");
+  a.textContent = t;
+  axis.appendChild(a);
+  const g = document.createElement("i");
+  grid.appendChild(g);
+});
+
+const list = document.getElementById("list");
+rows.forEach(r=>{
+  const pct = r.count / BASE * 100;
+  const posPct = (pct / AXIS_MAX * 100).toFixed(2);
+  const el = document.createElement("div");
+  el.className = "ub-row" + (r.isOther ? " is-other" : "");
+  el.innerHTML =
+    `<div class="ub-name">${r.name}</div>` +
+    `<div class="ub-track">` +
+      `<div class="ub-line" data-w="${posPct}"></div>` +
+      `<div class="ub-dot" data-x="${posPct}"></div>` +
+      `<div class="ub-val" data-x="${posPct}"><b>${pct.toFixed(1)}%</b><span class="sep">·</span>${r.count.toLocaleString()}건</div>` +
+    `</div>`;
+  list.appendChild(el);
+});
+
+document.getElementById("note").innerHTML =
+  `한 매물에 매칭된 용도가 여러 개인 경우 전부 집계 (${BASE.toLocaleString()}건 중 ${MULTI}건 다중 용도) · 세로 합계가 100%를 넘을 수 있음<br>※ 기타 6개 용도: 교육연구시설 4건 · 자동차관련시설 4건 · 판매시설 3건 · 종교시설 2건 · 창고시설 1건 · 근린생활시설 1건`;
+
+function positionVal(v){
+  v.style.left = `calc(${v.dataset.x}% + 22px)`;
+}
+document.querySelectorAll(".ub-val").forEach(positionVal);
+
+const lines = [...document.querySelectorAll(".ub-line")];
+const dots = [...document.querySelectorAll(".ub-dot")];
+const vals = [...document.querySelectorAll(".ub-val")];
+
+const grow = () => {
+  lines.forEach((l,i)=> setTimeout(()=>{ l.style.width = l.dataset.w + "%"; }, i*70));
+  dots.forEach((d,i)=> setTimeout(()=>{ d.style.left = d.dataset.x + "%"; d.classList.add("shown"); }, i*70));
+  vals.forEach((v,i)=> setTimeout(()=>{ v.classList.add("shown"); }, i*70));
+};
+
+if (matchMedia("(prefers-reduced-motion: reduce)").matches){
+  lines.forEach(l=>l.style.width=l.dataset.w+"%");
+  dots.forEach(d=>{d.style.left=d.dataset.x+"%";d.classList.add("shown");});
+  vals.forEach(v=>v.classList.add("shown"));
+} else if ("IntersectionObserver" in window){
+  const io = new IntersectionObserver(e=>{
+    if (e[0].isIntersecting){ grow(); io.disconnect(); }
+  },{threshold:.25});
+  io.observe(list);
+} else {
+  grow();
+}
+</script>
+</body>
+</html>
