@@ -59,13 +59,13 @@ window.__resourceBlobs["./Tax%20Simulator.dc.html"] = new Blob(["<!DOCTYPE html>
       <button onClick="{{ skipIntro }}" style="position:absolute;right:26px;bottom:26px;background:transparent;border:none;color:#7a8bb8;font:500 13px/1 'Pretendard',sans-serif;cursor:pointer;padding:8px 10px">건너뛰기 →</button>
 
       <div style="display:flex;flex-direction:column;align-items:center;margin:0 20px">
-      <div style="width:100%;max-width:360px;background:#0f182e;border:1px solid #263257;border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.5);overflow:hidden;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:center;gap:8px;padding:18px 22px;border-bottom:1px solid #263257">
-          <span style="width:8px;height:8px;border-radius:50%;background:#e8c69d;flex:none"></span>
-          <span style="font:600 15px/1.4 'Pretendard',sans-serif;color:#ece7de">자취방 구하는 중 · 단톡방</span>
+      <div style="width:100%;max-width:360px;background:#1E2C52;border:1px solid #2E3F6E;border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid #2E3F6E">
+          <span style="width:8px;height:8px;border-radius:50%;background:#E8C69D;flex:none"></span>
+          <span style="font:600 13px/1.4 'Pretendard',sans-serif;color:#C7CCDA">자취방 구하는 중 · 단톡방</span>
         </div>
 
-        <div style="padding:24px 20px;display:flex;flex-direction:column;gap:16px;min-height:280px;justify-content:flex-end">
+        <div style="padding:22px 18px;display:flex;flex-direction:column;gap:10px;min-height:280px;justify-content:flex-end">
           <sc-for list="{{ introMessages }}" as="m" hint-placeholder-count="6">
             <div style="{{ m.wrapStyle }}">
               <div style="{{ m.bubbleStyle }}">{{ m.prefix }}<span style="{{ m.midStyle }}">{{ m.mid }}</span>{{ m.suffix }}</div>
@@ -74,10 +74,10 @@ window.__resourceBlobs["./Tax%20Simulator.dc.html"] = new Blob(["<!DOCTYPE html>
 
           <sc-if value="{{ introTyping }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;justify-content:flex-start">
-              <div style="display:flex;align-items:center;gap:5px;padding:14px 20px;background:#2a3a66;border-radius:20px">
-                <span style="width:6px;height:6px;border-radius:50%;background:#647091;animation:typingBounce 1.1s ease-in-out infinite"></span>
-                <span style="width:6px;height:6px;border-radius:50%;background:#647091;animation:typingBounce 1.1s ease-in-out .15s infinite"></span>
-                <span style="width:6px;height:6px;border-radius:50%;background:#647091;animation:typingBounce 1.1s ease-in-out .3s infinite"></span>
+              <div style="display:flex;align-items:center;gap:5px;padding:12px 16px;border-radius:14px 14px 14px 4px;background:#2A3A66">
+                <span style="width:6px;height:6px;border-radius:50%;background:#97A0B8;animation:typingBounce 1.2s infinite"></span>
+                <span style="width:6px;height:6px;border-radius:50%;background:#97A0B8;animation:typingBounce 1.2s infinite .15s"></span>
+                <span style="width:6px;height:6px;border-radius:50%;background:#97A0B8;animation:typingBounce 1.2s infinite .3s"></span>
               </div>
             </div>
           </sc-if>
@@ -85,7 +85,7 @@ window.__resourceBlobs["./Tax%20Simulator.dc.html"] = new Blob(["<!DOCTYPE html>
       </div>
 
       <sc-if value="{{ introPhraseVisible }}" hint-placeholder-val="{{ false }}">
-        <div style="text-align:center;margin-top:28px;font:700 20px/1.5 'Pretendard',sans-serif;color:#ece7de;opacity:0;{{ introPhraseStyle }}">
+        <div style="text-align:center;margin-top:34px;font:600 21px/1.5 'Pretendard',sans-serif;letter-spacing:.01em;color:#DDE2EE;opacity:0;{{ introPhraseStyle }}">
           그래서, 저희가 직접 조사했습니다
         </div>
       </sc-if>
@@ -118,8 +118,8 @@ window.__resourceBlobs["./Tax%20Simulator.dc.html"] = new Blob(["<!DOCTYPE html>
 
     <section id="intro" data-screen-label="소개/타이틀" style="position:relative">
       <div style="min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 0;position:relative">
-      <div style="font:600 13px/1.6 'Pretendard',sans-serif;color:#D9A05B;letter-spacing:.08em;margin-bottom:26px">DSJA TeamA+</div>
-      <h1 style="font:600 clamp(42px,6.4vw,88px)/1.14 'Paperlogy-SemiBold',sans-serif;margin:0 auto 34px;letter-spacing:-.02em;max-width:900px">덫에 걸린 원룸러들:<br>전입신고 불가 매물 추적기</h1>
+      <div style="font:600 13px/1.6 'Pretendard',sans-serif;color:#D9A05B;letter-spacing:.08em;margin-bottom:26px">DATA JOURNALISM</div>
+      <h1 style="font:600 clamp(42px,6.4vw,88px)/1.14 'Paperlogy-SemiBold',sans-serif;margin:0 auto 34px;letter-spacing:-.02em;max-width:900px">덫에 걸린 원룸러들,<br>전입신고 불가 매물 추적기</h1>
       <p style="font:400 clamp(18px,1.9vw,22px)/1.85 'Pretendard',sans-serif;color:#b8b1a4;margin:0 auto 56px;max-width:660px">
         서울 4개 부동산 플랫폼 4만여 건을 전수 크롤링해 찾아낸 693건의 매물
       </p>
@@ -617,7 +617,7 @@ window.__resourceBlobs["./Tax%20Simulator.dc.html"] = new Blob(["<!DOCTYPE html>
         </div>
 
         <p style="font:400 18px/1.9 'Pretendard',sans-serif;color:#b8b1a4;max-width:640px;margin:36px auto 0;text-align:center;word-break:keep-all">
-          서울 25개 자치구를 모두 선택하고 기본값으로 계산하면, 연간 임대수입은 57억9,900만원, 과세표준은 15억7,438만원, 예상되는 세금은 약 2억2,000만원이다. 이는 청년 92명이<br>1년 동안 매달 20만원씩 받는 청년월세 특별지원에 해당하는 규모다.
+          서울 25개 자치구를 모두 선택하고 기본값으로 계산하면, 연간 임대수입은 57억9,900만원, 과세표준은 15억7,438만원, 예상되는 세금은 약 2억2,000만원이다. 이는 청년 92명이 1년<br>동안 매달 20만원씩 받는 청년월세 특별지원에 해당하는 규모다.
         </p>
         <p style="font:400 18px/1.9 'Pretendard',sans-serif;color:#b8b1a4;max-width:640px;margin:22px auto 0;text-align:center;word-break:keep-all">
           다만 이 금액은 실제 잠재세수의 하한에 가깝다. 계산에서 빠진 부분이 있기 때문이다.
@@ -673,7 +673,7 @@ const INTRO_MESSAGES = [
   { from: 'them', mid: '야 자취방 계약 어떻게 돼감?' },
   { from: 'me', prefix: '어 오늘 계약서 씀! ', mid: '보증금 300에 월 40', suffix: 'ㅎㅎ', midStyle: 'font-weight:700' },
   { from: 'them', mid: '오 싸다 어디임?' },
-  { from: 'me', prefix: '역세권인데 ', mid: '전입신고는 안 된대', suffix: 'ㅋㅋ 그냥 살려구', midStyle: 'background:#eed4b5;color:#172343;padding:1px 6px;border-radius:5px;font-weight:700' },
+  { from: 'me', prefix: '역세권인데 ', mid: '전입신고는 안 된대', suffix: 'ㅋㅋ 그냥 살려구', midStyle: 'background:rgba(255,255,255,.55);color:#3B1E00;padding:1px 5px;border-radius:4px;font-weight:800' },
   { from: 'them', mid: '...그거 그냥 넘어가도 되는거임?' },
   { from: 'them', mid: '잠깐만... 그거 생각보다 위험할 수도 있어' }
 ];
@@ -883,8 +883,8 @@ class Component extends DCLogic {
         suffix: m.suffix || '',
         midStyle: m.midStyle || '',
         wrapStyle: `display:flex;justify-content:${mine ? 'flex-end' : 'flex-start'}`,
-        bubbleStyle: `max-width:78%;padding:14px 18px;font:400 15.5px/1.5 'Pretendard',sans-serif;` +
-          `background:${mine ? '#D9A05B' : '#2A3A66'};color:${mine ? '#172343' : '#ece7de'};border-radius:20px;` +
+        bubbleStyle: `max-width:75%;padding:10px 14px;font:400 14.5px/1.55 'Pretendard',sans-serif;` +
+          `background:${mine ? '#D9A05B' : '#2A3A66'};color:#EDEDED;border-radius:${mine ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};` +
           `opacity:${visible ? 1 : 0};transform:${visible ? 'none' : 'translateY(10px)'};transition:opacity .35s ease,transform .35s ease`
       };
     });
