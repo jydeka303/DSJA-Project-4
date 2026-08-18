@@ -1220,6 +1220,7 @@ class Component extends DCLogic {
     this.capDotRef = React.createRef();
     this.cueRef = React.createRef();
     this.timers = [];
+    this.snapOffset = 24;
     this.heroRef = React.createRef();
     this.cueTextRef = React.createRef();
     this.realNoteRef = React.createRef();
@@ -1287,7 +1288,7 @@ class Component extends DCLogic {
       if (!el) return;
       if (this.setActiveToc) this.setActiveToc(id);
       clearTimeout(this.settleTimer);
-      this.glideTo(this.docTop(el), 620);
+      this.glideTo(this.snapTop(el), 620);
     };
     this.barA = React.createRef();
     this.barB = React.createRef();
@@ -1301,6 +1302,14 @@ class Component extends DCLogic {
 
   docTop(el) {
     return el.getBoundingClientRect().top + window.scrollY;
+  }
+
+  // A slide's raw top edge often has no breathing room above its heading
+  // (unlike top-level sections, which already bake in generous top padding),
+  // so landing there feels like the content is jammed against the browser's
+  // top edge. Snap a little short of the true top instead.
+  snapTop(el) {
+    return Math.max(0, Math.round(this.docTop(el)) - this.snapOffset);
   }
 
   runKakaoIntro() {
@@ -1377,20 +1386,38 @@ class Component extends DCLogic {
   }
 
   getStops() {
-    const secs = Array.from(document.querySelectorAll("section[data-slide]"));
+    const secs = this.slides();
     if (!secs.length) return [];
     const vh = window.innerHeight;
     const max = document.documentElement.scrollHeight - vh;
-    const set = new Set();
-    set.add(0);
 
-    secs.forEach(s => {
-      const top = Math.round(this.docTop(s));
-      set.add(Math.max(0, Math.min(top, max)));
+    // Section-level markers (chapter boundaries) are always kept as their own
+    // stop. Sub-section markers only become a stop once they're far enough
+    // from the previous stop to actually change what's on screen — otherwise
+    // a run of closely-spaced markers (e.g. inside a long chapter) forces
+    // several key presses that visibly move the page by only a sliver.
+    const raw = secs.map(s => ({
+      top: Math.min(this.snapTop(s), max),
+      hard: s.tagName === "SECTION"
+    }));
+    raw.push({ top: 0, hard: true });
+    raw.push({ top: max, hard: true });
+    raw.sort((a, b) => a.top - b.top);
+
+    const minGap = vh * 0.5;
+    const stops = [];
+    let anchor = null;
+    raw.forEach(s => {
+      const isNewTop = stops.length === 0 || stops[stops.length - 1] !== s.top;
+      if (s.hard) {
+        if (isNewTop) stops.push(s.top);
+        anchor = s.top;
+      } else if (anchor === null || s.top - anchor >= minGap) {
+        if (isNewTop) stops.push(s.top);
+        anchor = s.top;
+      }
     });
-
-    set.add(max);
-    return Array.from(set).sort((a, b) => a - b);
+    return stops;
   }
 
   settle() {
